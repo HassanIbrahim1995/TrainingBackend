@@ -1,6 +1,9 @@
 package employees.employeemanager.controller;
 
+import employees.employeemanager.dto.AddressDTO;
 import employees.employeemanager.dto.EmployeeDTO;
+import employees.employeemanager.model.Address;
+import employees.employeemanager.model.Department;
 import employees.employeemanager.model.Employee;
 import employees.employeemanager.service.EmployeeService;
 import lombok.AllArgsConstructor;
@@ -8,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,12 +42,37 @@ public class EmployeeController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping
-    public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody Employee employee) {
+    @PostMapping("/createEmployee")
+    public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
+        Employee employee = mapToEmployee(employeeDTO);
         Employee createdEmployee = employeeService.createEmployee(employee);
         EmployeeDTO createdEmployeeDTO = new EmployeeDTO(createdEmployee);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdEmployeeDTO);
     }
+
+    public Employee mapToEmployee(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        employee.setBirthday(employeeDTO.getBirthday());
+        employee.setAge(employeeDTO.getAge());
+        employee.setPhoneNumber(employeeDTO.getPhoneNumber());
+        employee.getName().setFirstName(employeeDTO.getFirstName());
+        employee.getName().setLastName(employeeDTO.getLastName());
+        employee.setDepartment(Department.valueOf(employeeDTO.getDepartment()));
+        employee.getLoginDetails().setUsername(employeeDTO.getUsername());
+        employee.getLoginDetails().setPassword(employeeDTO.getPassword());
+        List<Address> addresses = new ArrayList<>();
+        for (AddressDTO addressDTO : employeeDTO.getAddresses()) {
+            Address address = new Address();
+            address.setStreetName(addressDTO.getStreetName());
+            address.setCity(addressDTO.getCity());
+            address.setZipCode(addressDTO.getZipCode());
+            address.setEmployee(employee);
+            addresses.add(address);
+        }
+        employee.setAddresses(addresses);
+        return employee;
+    }
+
 
     @PutMapping("/{employeeId}")
     public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long employeeId, @RequestBody Employee employee) {
