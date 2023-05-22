@@ -1,15 +1,12 @@
 package employees.employeemanager.dto;
 
-import employees.employeemanager.model.Department;
 import employees.employeemanager.model.Employee;
-import employees.employeemanager.model.Name;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -21,6 +18,7 @@ public class EmployeeDTO {
     private int age;
     private String phoneNumber;
     private String department;
+    private String username; // New field for username
     private List<AddressDTO> addresses;
 
     public EmployeeDTO(Employee employee) {
@@ -31,6 +29,7 @@ public class EmployeeDTO {
         this.lastName = employee.getName().getLastName();
         this.department = employee.getDepartment().name();
         this.employeeId = employee.getPersonId();
+        this.username = employee.getLoginDetails().getUsername();
         this.addresses = employee.getAddresses().stream()
                 .map(AddressDTO::new)
                 .toList();

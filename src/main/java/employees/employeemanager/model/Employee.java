@@ -18,13 +18,15 @@ public class Employee extends Person {
     @Enumerated(EnumType.STRING)
     private Department department;
 
-    @Builder
-    public Employee(Long personId, Date birthday, int age, String phoneNumber, List<Address> addresses, Name name, Department department) {
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "login_id")
+    private LoginDetails loginDetails;
+    @Builder(builderMethodName = "employeeBuilder")
+    public Employee(Long personId, Date birthday, int age, String phoneNumber, List<Address> addresses, Name name, Department department, LoginDetails loginDetails) {
         super(personId, birthday, age, phoneNumber, addresses, name);
         this.department = department;
+        this.loginDetails = loginDetails;
     }
-
-
 }
 
 
